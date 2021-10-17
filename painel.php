@@ -1,5 +1,40 @@
 <?php
   include('protect.php');
+  include('conexao.php');  
+
+  $relogio_pes_fk_cod = $_SESSION['pes_codigo'];
+  date_default_timezone_set("America/Sao_Paulo");
+  $data_hoje = date("Y/m/d");
+  
+  $sql_code = "SELECT * FROM relogio WHERE relogio_pes_fk_cod = '$relogio_pes_fk_cod' AND relogio_data = '$data_hoje' ";
+  $sql_query = $mysqli->query($sql_code) or die("Falha na execução do código SQL: " . $mysqli->error);
+  
+  $quantidade = $sql_query->num_rows;
+  
+  if($quantidade = 1){
+    
+    if(isset($_POST['sair'])){
+      echo 'oi';
+      $hora_agora = date("h:i:s");
+      $sql = "INSERT INTO relogio (relogio_sai) VALUES ('$hora_agora')";   
+
+    }
+  }
+  else{
+    /*Insert do horario na coluna entrada no bd*/
+  }
+  
+ 
+  /*if(isset($_POST['entrar']) || isset($_POST['sair'])){
+
+    else {
+        echo "Error: " . $sql . "<br>" . $sql->error;
+    }
+  }
+  date_default_timezone_set("America/Sao_Paulo");
+  echo "Today is " . date("Y/m/d")."<br>";
+  echo "The time is " . date("h:i:sa");*/
+  
 ?>
 
 <!doctype html>
@@ -32,12 +67,27 @@
         .bd-placeholder-img-lg {
           font-size: 3.5rem;
         }
+      } 
+
+      .cont { 
+        height: 200px;
+        position: relative; 
+      }
+
+      .center {
+        margin: 0;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        -ms-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);
       }
     </style>
 
     
     <!-- Custom styles for this template -->
     <link href="headers.css" rel="stylesheet">
+
   </head>
   <body>
     
@@ -45,7 +95,7 @@
   
   
   <div class="container">
-  <img ID="imagem" src="assets/img/aquicob.png" width="80" height="80">
+  <img ID="imagem" src="assets/images/aquicob.png" width="80" height="80">
     <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
       <a href="/" class="d-flex align-items-center col-md-3 mb-2 mb-md-0 text-dark text-decoration-none">
         <svg class="bi me-2" width="40" height="32" role="img" aria-label="Bootstrap"><use xlink:href="#bootstrap"/></svg>
@@ -59,13 +109,39 @@
 
       <div class="col-md-3 text-end">
         <a href="index.php">
-        <button type="button" class="btn btn-primary">Sair</button>
-        <a>
+          <button type="button" class="btn btn-primary">Sair</button>
+        </a>
       </div>
     </header>
   </div>
 
+  <div class="cont" style="height:80px">
+    <div class="center">
+      <button type="button" class="btn btn-success" style="width:300px;">Status</button>
+    </div>
+  </div>
+
+  
+  <form action="" method="POST">
+    <div class="cont">
+      <div class="center">
+          <button type="button" class="btn btn-success" style="width:68px" name="entrar">Entrar</button>
+          
+          
+          
+          <button type="button" class="btn btn-warning" style="width:68px" name="almoçar">Pausa</button>
+          
+          <!--<button type="button" class="btn btn-info">Voltar</button>-->
+          
+          
+          <button type="button" class="btn btn-danger" style="width:68px" name="sair">Sair</button>
+        </div>
+      </div>
+    </form>
+  
+
 </main>
+  
 
     <script src="../assets/dist/js/bootstrap.bundle.min.js"></script>
   </body>
