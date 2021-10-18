@@ -1,40 +1,46 @@
 <?php
   include('protect.php');
   include('conexao.php');  
-
+  
   $relogio_pes_fk_cod = $_SESSION['pes_codigo'];
   date_default_timezone_set("America/Sao_Paulo");
   $data_hoje = date("Y/m/d");
-  
-  $sql_code = "SELECT * FROM relogio WHERE relogio_pes_fk_cod = '$relogio_pes_fk_cod' AND relogio_data = '$data_hoje' ";
-  $sql_query = $mysqli->query($sql_code) or die("Falha na execução do código SQL: " . $mysqli->error);
-  
-  $quantidade = $sql_query->num_rows;
-  
-  if($quantidade = 1){
+
+  if($_SERVER['REQUEST_METHOD'] == "POST" and isset($_POST['sair'])){
+
     
-    if(isset($_POST['sair'])){
-      echo 'oi';
-      $hora_agora = date("h:i:s");
-      $sql = "INSERT INTO relogio (relogio_sai) VALUES ('$hora_agora')";   
-
+    $sql_code = "SELECT * FROM relogio WHERE relogio_pes_fk_cod = '$relogio_pes_fk_cod' AND relogio_data = '$data_hoje' ";
+    $sql_query = $mysqli->query($sql_code) or die("Falha na execução do código SQL: " . $mysqli->error);
+    
+    $quantidade = $sql_query->num_rows;
+    
+    if($quantidade == 1){
+      
+      $sql_code = "UPDATE relogio SET relogio_sai = now() WHERE relogio_pes_fk_cod = $relogio_pes_fk_cod ";   
+      $sql_query = $mysqli->query($sql_code) or die("Falha na execução do código SQL: " . $mysqli->error);
     }
   }
-  else{
-    /*Insert do horario na coluna entrada no bd*/
-  }
   
- 
-  /*if(isset($_POST['entrar']) || isset($_POST['sair'])){
-
-    else {
-        echo "Error: " . $sql . "<br>" . $sql->error;
+  if($_SERVER['REQUEST_METHOD'] == "POST" and isset($_POST['entrar'])){
+  
+    $sql_code = "SELECT * FROM relogio WHERE relogio_pes_fk_cod = '$relogio_pes_fk_cod' AND relogio_data = '$data_hoje' ";
+    $sql_query = $mysqli->query($sql_code) or die("Falha na execução do código SQL: " . $mysqli->error);
+    
+    $quantidade = $sql_query->num_rows;
+    
+    if($quantidade == 0){
+      $sql_code = "INSERT INTO relogio (relogio_pes_fk_cod, relogio_ent) VALUES ('$relogio_pes_fk_cod', now())";
+      $sql_query = $mysqli->query($sql_code) or die("Falha na execução do código SQL: " . $mysqli->error);
     }
   }
-  date_default_timezone_set("America/Sao_Paulo");
-  echo "Today is " . date("Y/m/d")."<br>";
-  echo "The time is " . date("h:i:sa");*/
+
+  /*if($_SERVER['REQUEST_METHOD'] == "POST" and isset($_POST['almoco'])){
   
+    $sql_code = "INSERT INTO relogio (relogio_pes_fk_cod, relogio_ent) VALUES ('$relogio_pes_fk_cod', now())";
+    $sql_query = $mysqli->query($sql_code) or die("Falha na execução do código SQL: " . $mysqli->error);
+  }*/
+
+
 ?>
 
 <!doctype html>
@@ -125,16 +131,13 @@
   <form action="" method="POST">
     <div class="cont">
       <div class="center">
-          <button type="button" class="btn btn-success" style="width:68px" name="entrar">Entrar</button>
+          <button type="submit" class="btn btn-success" style="width:68px" name="entrar">Entrar</button>
           
-          
-          
-          <button type="button" class="btn btn-warning" style="width:68px" name="almoçar">Pausa</button>
+          <button type="button" class="btn btn-warning" style="width:68px" name="almoco">Pausa</button>
           
           <!--<button type="button" class="btn btn-info">Voltar</button>-->
           
-          
-          <button type="button" class="btn btn-danger" style="width:68px" name="sair">Sair</button>
+          <button type="submit" class="btn btn-danger" style="width:68px" name="sair">Sair</button>
         </div>
       </div>
     </form>
