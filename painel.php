@@ -133,7 +133,6 @@
 
   <div class="cont" style="height:80px">
     <div class="center">
-    <input type="button" value="Open Curtain" onclick="return change(this);" />
     </div>
   </div>
 
