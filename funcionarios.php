@@ -56,10 +56,10 @@
       </a>
 
       <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
-        <li><a href="painel.php" class="nav-link px-2 link-secundary">Inicio</a></li>
+        <li><a href="painel.php" class="nav-link px-2 link-dark">Inicio</a></li>
         <li><a href="cadastro.php" class="nav-link px-2 link-dark">Cadastrar</a></li>
         <li><a href="relatorio.php" class="nav-link px-2 link-dark">Relatório</a></li>
-        <li><a href="#" class="nav-link px-2 link-dark">Funcionários</a></li>
+        <li><a href="#" class="nav-link px-2 link-secundary">Funcionários</a></li>
       </ul>
 
       <div class="col-md-3 text-end">
