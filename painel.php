@@ -2,43 +2,52 @@
   include('protect.php');
   include('conexao.php');  
   
-  $relogio_pes_fk_cod = $_SESSION['pes_codigo'];
+  $fup_fk_fun_codigo = $_SESSION['fun_codigo'];
   date_default_timezone_set("America/Sao_Paulo");
   $data_hoje = date("Y/m/d");
-
+  $status ='Status';
+  if($_SERVER['REQUEST_METHOD'] == "POST" and isset($_POST['entrar'])){
+  
+    $sql_code = "SELECT * FROM funcionario_ponto WHERE fup_fk_fun_codigo = '$fup_fk_fun_codigo' AND fup_data = '$data_hoje' ";
+    $sql_query = $mysqli->query($sql_code) or die("Falha na execução do código SQL: " . $mysqli->error);
+    
+    $quantidade = $sql_query->num_rows;
+    
+    if($quantidade == 0){
+      $sql_code = "INSERT INTO funcionario_ponto (fup_fk_fun_codigo, fup_data_entrada, fup_data) VALUES ('$fup_fk_fun_codigo', now(), '$data_hoje')";
+      $sql_query = $mysqli->query($sql_code) or die("Falha na execução do código SQL: " . $mysqli->error);
+      echo '<script language="javascript">';
+      echo 'alert("Ponto batido!")';
+      echo '</script>';
+    }
+  }
+  
   if($_SERVER['REQUEST_METHOD'] == "POST" and isset($_POST['sair'])){
 
     
-    $sql_code = "SELECT * FROM relogio WHERE relogio_pes_fk_cod = '$relogio_pes_fk_cod' AND relogio_data = '$data_hoje' ";
+    $sql_code = "SELECT * FROM funcionario_ponto WHERE fup_fk_fun_codigo = '$fup_fk_fun_codigo' AND fup_data = '$data_hoje' ";
     $sql_query = $mysqli->query($sql_code) or die("Falha na execução do código SQL: " . $mysqli->error);
     
     $quantidade = $sql_query->num_rows;
     
     if($quantidade == 1){
       
-      $sql_code = "UPDATE relogio SET relogio_sai = now() WHERE relogio_pes_fk_cod = $relogio_pes_fk_cod ";   
+      $sql_code = "UPDATE funcionario_ponto SET fup_data_saida = now() WHERE fup_fk_fun_codigo = $fup_fk_fun_codigo AND fup_data = '$data_hoje'";   
       $sql_query = $mysqli->query($sql_code) or die("Falha na execução do código SQL: " . $mysqli->error);
+    }
+    else{
+      echo '<script language="javascript">';
+      echo 'alert("Erro ao cadastrar saida!")';
+      echo '</script>';
     }
   }
   
-  if($_SERVER['REQUEST_METHOD'] == "POST" and isset($_POST['entrar'])){
-  
-    $sql_code = "SELECT * FROM relogio WHERE relogio_pes_fk_cod = '$relogio_pes_fk_cod' AND relogio_data = '$data_hoje' ";
-    $sql_query = $mysqli->query($sql_code) or die("Falha na execução do código SQL: " . $mysqli->error);
-    
-    $quantidade = $sql_query->num_rows;
-    
-    if($quantidade == 0){
-      $sql_code = "INSERT INTO relogio (relogio_pes_fk_cod, relogio_ent) VALUES ('$relogio_pes_fk_cod', now())";
-      $sql_query = $mysqli->query($sql_code) or die("Falha na execução do código SQL: " . $mysqli->error);
-    }
-  }
 
-  /*if($_SERVER['REQUEST_METHOD'] == "POST" and isset($_POST['almoco'])){
+  if($_SERVER['REQUEST_METHOD'] == "POST" and isset($_POST['almoco'])){
   
-    $sql_code = "INSERT INTO relogio (relogio_pes_fk_cod, relogio_ent) VALUES ('$relogio_pes_fk_cod', now())";
+    $sql_code = "INSERT INTO funcionario (fup_fk_fun_codigo, funcionario_ent) VALUES ('$fup_fk_fun_codigo', now())";
     $sql_query = $mysqli->query($sql_code) or die("Falha na execução do código SQL: " . $mysqli->error);
-  }*/
+  }
 
 
 ?>
@@ -101,7 +110,7 @@
   
   
   <div class="container">
-  <img ID="imagem" src="assets/images/aquicob.png" width="80" height="80">
+  <img ID="imagem" src="assets/img/aquicob.png" width="80" height="80">
     <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
       <a href="/" class="d-flex align-items-center col-md-3 mb-2 mb-md-0 text-dark text-decoration-none">
         <svg class="bi me-2" width="40" height="32" role="img" aria-label="Bootstrap"><use xlink:href="#bootstrap"/></svg>
@@ -111,6 +120,7 @@
         <li><a href="painel.php" class="nav-link px-2 link-secondary">Inicio</a></li>
         <li><a href="cadastro.php" class="nav-link px-2 link-dark">Cadastrar</a></li>
         <li><a href="#" class="nav-link px-2 link-dark">Relatório</a></li>
+        <li><a href="funcionarios.php" class="nav-link px-2 link-dark">Funcionários</a></li>
       </ul>
 
       <div class="col-md-3 text-end">
@@ -123,7 +133,7 @@
 
   <div class="cont" style="height:80px">
     <div class="center">
-      <button type="button" class="btn btn-success" style="width:300px;">Status</button>
+    <input type="button" value="Open Curtain" onclick="return change(this);" />
     </div>
   </div>
 
