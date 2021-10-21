@@ -6,7 +6,7 @@
 
   if(isset($_POST['pesquisaNome'])){
     $dadoBusca = $_POST['pesquisaNome'];
-    $sql .= "WHERE fun_nome LIKE '{$dadoBusca}'";
+    $sql .= " WHERE fun_nome LIKE '%{$dadoBusca}%'";
   }
   $query = mysqli_query($mysqli, $sql) or die("Erro ao tentar exibir"."<br><br>". $mysqli->error);
 ?>
