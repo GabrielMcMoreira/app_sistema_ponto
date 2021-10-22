@@ -99,7 +99,6 @@
       echo "</table>";
       mysqli_close($mysqli)
     ?>
-
     <div>
 
     </div>
