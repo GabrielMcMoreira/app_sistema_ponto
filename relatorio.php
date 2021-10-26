@@ -4,11 +4,25 @@
 
   $sql = "SELECT fun_nome, fup_data_entrada, fup_data_saida FROM funcionario_ponto INNER JOIN funcionario ON fup_fk_fun_codigo = fun_codigo";
 
+  //Por nome
   if(isset($_POST['pesquisaNome'])){
-    $dadoBusca = $_POST['pesquisaNome'];
-    $sql .= " WHERE fun_nome LIKE '%{$dadoBusca}%'";
+    $nomeBusca = $_POST['pesquisaNome'];
+    $sql .= " WHERE fun_nome LIKE '%{$nomeBusca}%'";
   }
   $query = mysqli_query($mysqli, $sql) or die("Erro ao tentar exibir"."<br><br>". $mysqli->error);
+
+/*
+  $sql1 = "SELECT fun_nome, fup_data_entrada, fup_data_saida FROM funcionario_ponto INNER JOIN funcionario ON fup_fk_fun_codigo = fun_codigo";
+  //Por data 
+  if(isset($_POST['pesquisaInicial']) && isset($_POST['pesquisaFinal'] )){
+    $dataInicial = $_POST['pesquisaInicial'];
+    $dataFinal = $_POST['pesquisaFinal'];
+
+    $sql1 .= " WHERE fup_data_entrada >= '{$dataInicial} 00:00:00' AND fup_data_saida <= '{$dataFinal} 23:59:59' ";
+  }
+
+  $query = mysqli_query($mysqli, $sql1) or die("Erro ao tentar exibir"."<br><br>". $mysqli->error);
+*/
 ?>
 
 <!doctype html>
@@ -86,11 +100,9 @@
       <form method="POST" action="relatorio.php"><br>
       <div class="caixa_cadastro">
         <label for="exampleFormControlInput1" class="form-label">Por nome:</label>
-        <label for="exampleFormControlInput1" class="form-label">Por data:</label>
+        <label for="exampleFormControlInput1" class="form-label"></label>
         <br>
-        <input type="text" name="pesquisaNome" class="caixa_pesquisa" placeholder="Nome" value="">
-        <input type="date" name="pesquisaInicial" class="caixa_pesquisa" placeholder="Data inicial">
-        <input type="date" name="pesquisaFinal" class="caixa_pesquisa" placeholder="Data final">
+        <input type="text" name="pesquisaNome" class="caixa_pesquisa" placeholder="Nome" value=""><br>
         <br><input type="submit" value="Pesquisar" class="btn btn-primary" name="pesquisar"/>
       </div> 
       </form>
@@ -104,9 +116,6 @@
       echo "</thead>";
 
       while($registro = mysqli_fetch_array($query)){
-        //$fun_nome = $registro['Nome'];
-        //$fup_data_entrada = $registro['Entrada'];
-        //$fup_data_saida = $registro['Saida'];
 
         echo "<tbody>";
         echo "<tr>";
@@ -120,6 +129,9 @@
       mysqli_close($mysqli)
     ?>
     </div>
+    <form method="POST" action="exportar.php">
+      <input type="submit" name="export" value="Exportar" class="btn btn-primary"/>
+    </form>
 </main>
     <script src="../assets/dist/js/bootstrap.bundle.min.js"></script>
   </body>
