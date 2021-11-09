@@ -2,27 +2,27 @@
   include('protect.php');
   include('conexao.php');
 
-  $hora_inicio = "%%";
-  echo $hora_inicio;
-  
-  if(isset($_POST['pesquisar_cad'])){
+  $sql = "SELECT fun_nome, fup_data, fup_data_entrada, fup_hora_pausa, fup_hora_retorno, fup_data_saida FROM funcionario_ponto INNER JOIN funcionario ON fup_fk_fun_codigo = fun_codigo";
+
+  //Por nome
+  if(isset($_POST['pesquisaNome']) && isset($_POST['dataInicial']) && isset($_POST['dataFinal'] )){
     $nomeBusca = $_POST['pesquisaNome'];
-    $sql = "SELECT fun_nome, fup_data_entrada, fup_data_saida FROM funcionario_ponto INNER JOIN funcionario ON fup_fk_fun_codigo = fun_codigo WHERE fun_nome LIKE '%{$nomeBusca}%' ";
-    $query = mysqli_query($mysqli, $sql) or die("Erro ao tentar exibir"."<br><br>". $mysqli->error);
+    $dataInicial = $_POST['dataInicial'];
+    $dataFinal = $_POST['dataFinal'];
+
+    if(empty($dataInicial) && empty($dataFinal)){
+      date_default_timezone_set("America/Sao_Paulo");
+      $dataInicial = date("Y/m/d");
+      $dataFinal = date("Y/m/d");
+
+    }
+    if($nomeBusca != NULL){
+      $sql .= " WHERE fun_nome LIKE '%{$nomeBusca}%'";
+
+    } 
   }
 
-
-/*
-  $sql1 = "SELECT fun_nome, fup_data_entrada, fup_data_saida FROM funcionario_ponto INNER JOIN funcionario ON fup_fk_fun_codigo = fun_codigo";
-  //Por data 
-  if(isset($_POST['pesquisaInicial']) && isset($_POST['pesquisaFinal'] )){
-    $dataInicial = $_POST['pesquisaInicial'];
-    $dataFinal = $_POST['pesquisaFinal'];
-
-    $sql1 .= " WHERE fup_data_entrada >= '{$dataInicial} 00:00:00' AND fup_data_saida <= '{$dataFinal} 23:59:59' ";
-  }
-  $query = mysqli_query($mysqli, $sql1) or die("Erro ao tentar exibir"."<br><br>". $mysqli->error);
-*/
+  $query = mysqli_query($mysqli, $sql) or die("Erro ao tentar exibir"."<br><br>". $mysqli->error);
 ?>
 
 <!doctype html>
@@ -74,17 +74,17 @@
   
   <div class="container">
     <img ID="imagem" src="assets/img/aquicob.png" width="80" height="80">
-      <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
-        <a class="d-flex align-items-center col-md-3 mb-2 mb-md-0 text-dark text-decoration-none">
-          <svg class="bi me-2" width="40" height="32" role="img" aria-label="Bootstrap"><use xlink:href="#bootstrap"/></svg>
-        </a>
+    <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
+    <a class="d-flex align-items-center col-md-3 mb-2 mb-md-0 text-dark text-decoration-none">
+    <svg class="bi me-2" width="40" height="32" role="img" aria-label="Bootstrap"></svg>
+    </a>
 
-        <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
-          <li><a href="painel.php" class="nav-link px-2 link-dark">Inicio</a></li>
-          <li><a href="cadastro.php" class="nav-link px-2 link-dark">Cadastrar</a></li>
-          <li><a href="relatorio.php" class="nav-link px-2 link-secondary">Relatório</a></li>
-          <li><a href="funcionarios.php" class="nav-link px-2 link-dark">Funcionários</a></li>
-        </ul>
+      <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
+        <li><a href="painel.php" class="nav-link px-2 link-dark">Inicio</a></li>
+        <li><a href="cadastro.php" class="nav-link px-2 link-dark">Cadastrar</a></li>
+        <li><a href="relatorio.php" class="nav-link px-2 link-secondary">Relatório</a></li>
+        <li><a href="funcionarios.php" class="nav-link px-2 link-dark">Funcionários</a></li>
+      </ul>
 
       <div class="col-md-3 text-end">
         <a href="index.php">
@@ -92,46 +92,49 @@
         </a>
       </div>
     </header>
-  </div>
+    </div>
     
-      <div class="container">
-        <h4>Relatório de busca</h4>
-      
-        <form method="POST" action="relatorio.php"><br>
-          <div class="caixa_cadastro">
-            <label for="exampleFormControlInput1" class="form-label">Por nome:</label>
-            <label for="exampleFormControlInput1" class="form-label"></label>
-            <br>
-            <input type="text" class="caixa_pesquisa" placeholder="Nome" name="pesquisaNome"/>
-            <br>
-            <br>
-            <input type="submit" value="Pesquisar" class="btn btn-primary" name="pesquisar_cad"/>
-          </div> 
-        </form>
-      </div>
-      <div style="text-align: center;">
-        <?php
-        echo "<table class='content-table'>";
-        echo "<thead>";
-        echo "<th>Nome</th>";
-        echo "<th>Data Entrada</th>";
-        echo "<th>Data Saida</th>";
-        echo "</thead>";
+    <div>
 
-        while($registro = mysqli_fetch_array($query)){
+      <h4>Relatório de busca</h4>
+      <form method="POST" action="relatorio.php"><br>
+      <div class="caixa_cadastro">
+        <label for="exampleFormControlInput1" class="form-label">Por nome:</label>
+        <label for="exampleFormControlInput1" class="form-label"></label>
+        <br>
+        <input type="text" name="pesquisaNome" class="caixa_pesquisa" placeholder="Nome" value=""><br>
+        <br><input type="submit" value="Pesquisar" class="btn btn-primary" name="pesquisar"/>
+      </div> 
+      </form>
 
-          echo "<tbody>";
-          echo "<tr>";
-          echo "<td>".$registro['fun_nome']."</td>";
-          echo "<td>".$registro['fup_data_entrada']."</td>";
-          echo "<td>".$registro['fup_data_saida']."</td>";
-          echo "</tr>";
-        }
-        echo "</tbody>";
-        echo "</table>";
-        mysqli_close($mysqli)
-        ?>
-      </div>
+      <?php
+      echo "<table class='content-table'>";
+      echo "<thead>";
+      echo "<th>Nome</th>";
+      echo "<th>Data</th>";
+      echo "<th>Hora Entrada</th>";
+      echo "<th>Inicio Almoço</th>";
+      echo "<th>Retorno Almoço</th>";
+      echo "<th>Saida Saida</th>";
+      echo "</thead>";
+
+      while($registro = mysqli_fetch_array($query)){
+
+        echo "<tbody>";
+        echo "<tr>";
+        echo "<td>".$registro['fun_nome']."</td>";
+        echo "<td>".$registro['fup_data']."</td>";
+        echo "<td>".$registro['fup_data_entrada']."</td>";
+        echo "<td>".$registro['fup_hora_pausa']."</td>";
+        echo "<td>".$registro['fup_hora_retorno']."</td>";
+        echo "<td>".$registro['fup_data_saida']."</td>";
+        echo "</tr>";
+      }
+      echo "</tbody>";
+      echo "</table>";
+      mysqli_close($mysqli)
+    ?>
+    </div>
     <form method="POST" action="exportar.php">
       <input type="submit" name="export" value="Exportar" class="btn btn-primary"/>
     </form>
