@@ -2,26 +2,12 @@
   include('protect.php');
   include('conexao.php');
 
-  $sql = "SELECT fun_nome, fup_data, fup_data_entrada, fup_hora_pausa, fup_hora_retorno, fup_data_saida FROM funcionario_ponto INNER JOIN funcionario ON fup_fk_fun_codigo = fun_codigo";
+  $sql = "SELECT fun_nome, fup_data_entrada, fup_data_saida FROM funcionario_ponto INNER JOIN funcionario ON fup_fk_fun_codigo = fun_codigo";
 
-  //Por nome
-  if(isset($_POST['pesquisaNome']) && isset($_POST['dataInicial']) && isset($_POST['dataFinal'] )){
-    $nomeBusca = $_POST['pesquisaNome'];
-    $dataInicial = $_POST['dataInicial'];
-    $dataFinal = $_POST['dataFinal'];
-
-    if(empty($dataInicial) && empty($dataFinal)){
-      date_default_timezone_set("America/Sao_Paulo");
-      $dataInicial = date("Y/m/d");
-      $dataFinal = date("Y/m/d");
-
-    }
-    if($nomeBusca != NULL){
-      $sql .= " WHERE fun_nome LIKE '%{$nomeBusca}%'";
-
-    } 
+  if(isset($_POST['pesquisaNome'])){
+    $dadoBusca = $_POST['pesquisaNome'];
+    $sql .= " WHERE fun_nome LIKE '%{$dadoBusca}%'";
   }
-
   $query = mysqli_query($mysqli, $sql) or die("Erro ao tentar exibir"."<br><br>". $mysqli->error);
 ?>
 
@@ -100,9 +86,11 @@
       <form method="POST" action="relatorio.php"><br>
       <div class="caixa_cadastro">
         <label for="exampleFormControlInput1" class="form-label">Por nome:</label>
-        <label for="exampleFormControlInput1" class="form-label"></label>
+        <label for="exampleFormControlInput1" class="form-label">Por data:</label>
         <br>
-        <input type="text" name="pesquisaNome" class="caixa_pesquisa" placeholder="Nome" value=""><br>
+        <input type="text" name="pesquisaNome" class="caixa_pesquisa" placeholder="Nome" value="">
+        <input type="date" name="pesquisaInicial" class="caixa_pesquisa" placeholder="Data inicial">
+        <input type="date" name="pesquisaFinal" class="caixa_pesquisa" placeholder="Data final">
         <br><input type="submit" value="Pesquisar" class="btn btn-primary" name="pesquisar"/>
       </div> 
       </form>
@@ -111,22 +99,19 @@
       echo "<table class='content-table'>";
       echo "<thead>";
       echo "<th>Nome</th>";
-      echo "<th>Data</th>";
-      echo "<th>Hora Entrada</th>";
-      echo "<th>Inicio Almoço</th>";
-      echo "<th>Retorno Almoço</th>";
-      echo "<th>Saida Saida</th>";
+      echo "<th>Data Entrada</th>";
+      echo "<th>Data Saida</th>";
       echo "</thead>";
 
       while($registro = mysqli_fetch_array($query)){
+        //$fun_nome = $registro['Nome'];
+        //$fup_data_entrada = $registro['Entrada'];
+        //$fup_data_saida = $registro['Saida'];
 
         echo "<tbody>";
         echo "<tr>";
         echo "<td>".$registro['fun_nome']."</td>";
-        echo "<td>".$registro['fup_data']."</td>";
         echo "<td>".$registro['fup_data_entrada']."</td>";
-        echo "<td>".$registro['fup_hora_pausa']."</td>";
-        echo "<td>".$registro['fup_hora_retorno']."</td>";
         echo "<td>".$registro['fup_data_saida']."</td>";
         echo "</tr>";
       }
@@ -135,9 +120,6 @@
       mysqli_close($mysqli)
     ?>
     </div>
-    <form method="POST" action="exportar.php">
-      <input type="submit" name="export" value="Exportar" class="btn btn-primary"/>
-    </form>
 </main>
     <script src="../assets/dist/js/bootstrap.bundle.min.js"></script>
   </body>
