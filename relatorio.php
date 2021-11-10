@@ -2,7 +2,7 @@
   include('protect.php');
   include('conexao.php');
 
-  $sql = "SELECT fun_nome, fup_data_entrada, fup_data_saida FROM funcionario_ponto INNER JOIN funcionario ON fup_fk_fun_codigo = fun_codigo";
+  $sql = "SELECT fun_nome, fup_data_entrada, fup_hora_pausa, fup_hora_retorno, fup_data_saida FROM funcionario_ponto INNER JOIN funcionario ON fup_fk_fun_codigo = fun_codigo";
 
   if(isset($_POST['pesquisaNome'])){
     $dadoBusca = $_POST['pesquisaNome'];
@@ -100,6 +100,8 @@
       echo "<thead>";
       echo "<th>Nome</th>";
       echo "<th>Data Entrada</th>";
+      echo "<th>Inicio Almoço</th>";
+      echo "<th>Fim Almoço</th>";
       echo "<th>Data Saida</th>";
       echo "</thead>";
 
@@ -112,6 +114,8 @@
         echo "<tr>";
         echo "<td>".$registro['fun_nome']."</td>";
         echo "<td>".$registro['fup_data_entrada']."</td>";
+        echo "<td>".$registro['fup_hora_pausa']."</td>";
+        echo "<td>".$registro['fup_hora_retorno']."</td>";
         echo "<td>".$registro['fup_data_saida']."</td>";
         echo "</tr>";
       }
