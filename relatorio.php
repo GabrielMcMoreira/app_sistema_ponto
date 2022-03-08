@@ -2,8 +2,10 @@
 include('protect.php');
 include('conexao.php');
 
+date_default_timezone_set('america/sao_paulo');
+
 $buscaNome = '';
-$buscaDataInicial = " AND fup_data >=" . date("Y/m/d");
+$buscaDataInicial = "AND fup_data >= '" . date("Y-m-d") . " 00:00:00'";
 $buscaDataFinal = '';
 if (isset($_POST['pesquisaNome'])) {
   $nomeBusca = $_POST['pesquisaNome'];
@@ -21,7 +23,7 @@ if (isset($_POST['pesquisaDataInicial'])) {
 if (isset($_POST['pesquisaDataFinal'])) {
   $dataFinal = $_POST['pesquisaDataFinal'];
   if ($dataFinal != '') {
-    $buscaDataFinal = " AND fup_data <= '{$dataFinal}'";
+    $buscaDataFinal = "AND fup_data >= '{$buscaDataFinal} 23:59:59'";
   }
 }
 
@@ -86,7 +88,7 @@ $query = mysqli_query($mysqli, $sql) or die("Erro ao tentar exibir" . "<br><br>"
 
 
     <div class="container">
-      <img ID="imagem" src="assets/img/aquicob.png" width="80" height="80">
+      <img ID="imagem" src="aquicob.png" width="80" height="80">
       <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
         <a class="d-flex align-items-center col-md-3 mb-2 mb-md-0 text-dark text-decoration-none">
           <svg class="bi me-2" width="40" height="32" role="img" aria-label="Bootstrap"></svg>

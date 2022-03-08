@@ -1,59 +1,61 @@
 <?php
-  include('protect.php');
-  include('conexao.php');
+include('protect.php');
+include('conexao.php');
 
-  $sql = "SELECT fun_nome as Nome, fun_cargo as Cargo, fun_fone as Fone, fun_data_admissao as Admissao FROM funcionario WHERE fun_status LIKE 'A'";
-  $result = mysqli_query($mysqli, $sql) or die("Erro ao tentar exibir");
+$sql = "SELECT fun_nome as Nome, fun_cargo as Cargo, fun_fone as Fone, fun_data_admissao as Admissao, fun_codigo FROM funcionario WHERE fun_status LIKE 'A'";
+$result = mysqli_query($mysqli, $sql) or die("Erro ao tentar exibir");
 ?>
 
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
-    <meta name="generator" content="Hugo 0.84.0">
-    <title>Funcionarios- Aquicob</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <link rel="canonical" href="https://getbootstrap.com/docs/5.0/examples/headers/">
 
-    
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="">
+  <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+  <meta name="generator" content="Hugo 0.84.0">
+  <title>Funcionarios- Aquicob</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <link rel="canonical" href="https://getbootstrap.com/docs/5.0/examples/headers/">
 
-    <!-- Bootstrap core CSS -->
-<link href="../assets/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <style>
-      .bd-placeholder-img {
-        font-size: 1.125rem;
-        text-anchor: middle;
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        user-select: none;
+
+  <!-- Bootstrap core CSS -->
+  <link href="../assets/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    .bd-placeholder-img {
+      font-size: 1.125rem;
+      text-anchor: middle;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      user-select: none;
+    }
+
+    @media (min-width: 768px) {
+      .bd-placeholder-img-lg {
+        font-size: 3.5rem;
       }
+    }
+  </style>
 
-      @media (min-width: 768px) {
-        .bd-placeholder-img-lg {
-          font-size: 3.5rem;
-        }
-      }
-    </style>
 
-    
-    <!-- Custom styles for this template -->
-    <link href="funcionarios.css" rel="stylesheet">
-  </head>
-  <body>
-    
-<main>
-  
-  
-<div class="container">
-    <img ID="imagem" src="assets/img/aquicob.png" width="80" height="80">
+  <!-- Custom styles for this template -->
+  <link href="funcionarios.css" rel="stylesheet">
+</head>
+
+<body>
+
+  <main>
+
+
+    <div class="container">
+      <img ID="imagem" src="aquicob.png" width="80" height="80">
       <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
         <a class="d-flex align-items-center col-md-3 mb-2 mb-md-0 text-dark text-decoration-none">
           <svg class="bi me-2" width="40" height="32" role="img" aria-label="Bootstrap">
-            <use xlink:href="#bootstrap"/>
+            <use xlink:href="#bootstrap" />
           </svg>
         </a>
 
@@ -70,42 +72,51 @@
           </a>
         </div>
       </header>
-  </div>
+    </div>
 
     <h4>Funcionarios Cadastrados</h4>
 
     <?php
-      echo "<table class='content-table'>";
-      echo "<thead>";
-      echo "<th>Nome</th>";
-      echo "<th>Cargo</th>";
-      echo "<th>Fone</th>";
-      echo "<th>Admissão</th>";
-      echo "</thead>";
+    echo "<table class='content-table'>";
+    echo "<thead>";
+    echo "<th>Nome</th>";
+    echo "<th>Cargo</th>";
+    echo "<th>Fone</th>";
+    echo "<th>Admissão</th>";
+    echo "<th>Horas Extras</th>";
+    echo "</thead>";
 
-      while($registro = mysqli_fetch_array($result)){
-        $fun_nome = $registro['Nome'];
-        $fun_cargo = $registro['Cargo'];
-        $fun_fone = $registro['Fone'];
-        $fun_data_admissao = $registro['Admissao'];
+    while ($registro = mysqli_fetch_array($result)) {
+      $fun_nome = $registro['Nome'];
+      $fun_cargo = $registro['Cargo'];
+      $fun_fone = $registro['Fone'];
+      $fun_data_admissao = $registro['Admissao'];
+      $fun_codigo = $registro['fun_codigo'];
 
-        echo "<tbody>";
-        echo "<tr>";
-        echo "<td>".$fun_nome."</td>";
-        echo "<td>".$fun_cargo."</td>";
-        echo "<td>".$fun_fone."</td>";
-        echo "<td>".$fun_data_admissao."</td>";
-        echo "</tr>";
-      }
-      echo "</tbody>";
-      echo "</table>";
-      mysqli_close($mysqli)
+      $sql2 = "SELECT SEC_TO_TIME(SUM(TIME_TO_SEC(TIMEDIFF(ADDTIME(TIMEDIFF(fup_hora_pausa,fup_data_entrada), TIMEDIFF(fup_data_saida,fup_hora_retorno)), '08:45:00')))) as 'horasExtras' FROM funcionario_ponto WHERE fup_fk_fun_codigo = {$fun_codigo};";
+
+      $result2 = mysqli_query($mysqli, $sql2) or die("Erro ao tentar exibir horas extras");
+      $horaExtra = implode(" ", mysqli_fetch_assoc($result2));
+
+      echo "<tbody>";
+      echo "<tr>";
+      echo "<td>" . $fun_nome . "</td>";
+      echo "<td>" . $fun_cargo . "</td>";
+      echo "<td>" . $fun_fone . "</td>";
+      echo "<td>" . $fun_data_admissao . "</td>";
+      echo "<td>" . $horaExtra  . "</td>";
+      echo "</tr>";
+    }
+    echo "</tbody>";
+    echo "</table>";
+    mysqli_close($mysqli)
     ?>
     <div>
 
     </div>
 
-</main>
-    <script src="../assets/dist/js/bootstrap.bundle.min.js"></script>
-  </body>
+  </main>
+  <script src="../assets/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
 </html>
